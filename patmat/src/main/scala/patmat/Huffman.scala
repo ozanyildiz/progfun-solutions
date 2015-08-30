@@ -159,7 +159,7 @@ object Huffman {
    * The parameter `chars` is an arbitrary text. This function extracts the character
    * frequencies from that text and creates a code tree based on them.
    */
-  def createCodeTree(chars: List[Char]): CodeTree = ???
+  def createCodeTree(chars: List[Char]): CodeTree = until(singleton, combine)(makeOrderedLeafList(times(chars))).head
 
 
 
@@ -226,8 +226,10 @@ object Huffman {
    * This function returns the bit sequence that represents the character `char` in
    * the code table `table`.
    */
-  def codeBits(table: CodeTable)(char: Char): List[Bit] =
-    if (table.head._1 == char) table.head._2 else codeBits(table.tail)(char)
+  def codeBits(table: CodeTable)(char: Char): List[Bit] = table match {
+    case Nil => List()
+    case (char0, bits) :: ts => if (char0 == char) bits else codeBits(ts)(char)
+  }
 
   /**
    * Given a code tree, create a code table which contains, for every character in the
@@ -244,7 +246,7 @@ object Huffman {
    * use it in the `convert` method above, this merge method might also do some transformations
    * on the two parameter code tables.
    */
-  def mergeCodeTables(a: CodeTable, b: CodeTable): CodeTable = ???
+  def mergeCodeTables(a: CodeTable, b: CodeTable): CodeTable = a ::: b
 
   /**
    * This function encodes `text` according to the code tree `tree`.
